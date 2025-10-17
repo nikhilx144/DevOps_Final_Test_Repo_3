@@ -1,4 +1,5 @@
 resource "aws_security_group" "ec2_sg" {
+    name = "Security Group for EC2 Instance"
     description = "Security Group or Firewall for the EC2 Instance"
 
     ingress {
@@ -25,7 +26,7 @@ resource "aws_security_group" "ec2_sg" {
 
 resource "aws_key_pair" "deployer_key" {
     key_name = "deployer_key"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDS05RiC3iwF5ISZkuPbivKH8IifYyve5TXKPnlKDvpv4hd9+9gCqmCi7Hn40dgNzyfo0URaCVFVBDR9jmelRfgsQQ5qIcqX3Mam9xnmWufMjriji2v+N5qT8FONk4paHj4di3dzrV5Vb1rMUybOU4rIA+mhCezjsbShMtvsVGTOxJTol65UZn5SsrKcBsTgxvzAmEnm95hVOcFvz4QooxNwAFMjkFMaq0/9HpOFbvBjsDuDp7QH4eDgLTnINAfP4PWpeuBtoMXXLdspLw/RskNW/fds3/ivFMlaBLkTiN3MC3mUNMau4iTeCY7BfLtKsIhId1AznyMJXOIDKz+9SxSZl/yKgJwtXqpSXnt75fCIkbXxGacIru0Hd0jAwWx8ZVYF6zYjdY+uZ9epSQCgTGBBV8aXivltvnvUykCPX5zj4tGdJYq0Fgh2YK/BKzSUfQvuzui9uzk8Sc7uzLQ8dkkH1LaherfNx6u2iKETO/vBLiUmha9UXz4914t6+y5z9wNrAwkA825IP0DuFA5ccAGAs0q1vrkNmmIdHhlmhrnrPeW6w6Ifh/UifZWjfU8+0hx8paeRTnCcd/snnVpb8EZIH6F+D5Pc+bKS5wPOy7/GpKR5EK9CMs5zWA6saNxaItZoIEbClLMBSnduVFqx9/uG4+mCo/Lt7+WiXBi28Ua8w== nikhi@Nikhil"
+    public_key = var.public_key
 }
 
 resource "aws_iam_role" "ec2_role" {
@@ -68,7 +69,7 @@ resource "aws_instance" "ec2_instance" {
         # Update all packages
         sudo dnf update -y
         # Install Docker
-        sudo dnf install -y docker
+        sudo dnf install -y docker || sudo amazon-linux-extras install docker -y
         # Start the Docker service
         sudo systemctl start docker
         # Ensure Docker starts on boot
