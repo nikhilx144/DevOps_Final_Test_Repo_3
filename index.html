@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Inventory Table</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* MODERN & COLORFUL CSS STYLES */
+
+      /* --- COLOR PALETTE --- */
+      :root {
+        --primary-color: #4a42b0; /* Deep Indigo */
+        --secondary-color: #5d56c5; /* Lighter Indigo for contrast */
+        --background-light: #f6f8fa;
+        --text-dark: #2c3e50;
+        --text-medium: #7f8c8d;
+        --border-light: #dfe4e8;
+        --success-bg: #e6f7e8;
+        --success-text: #27ae60;
+        --warning-bg: #fff0d4;
+        --warning-text: #f39c12;
+        --danger-bg: #ffe6e6;
+        --danger-text: #c0392b;
+      }
+
+      /* --- RESET & TYPOGRAPHY --- */
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-light);
+        color: var(--text-dark);
+      }
+
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      a:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+      }
+
+      /* --- HEADER AND FILTERS --- */
+      .main-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--secondary-color) 100%
+        );
+        color: white;
+        padding: 25px 40px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 25px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .filter-form {
+        margin-top: 15px;
+      }
+
+      .form-elements {
+        display: flex;
+        gap: 20px;
+        align-items: flex-end;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .control-group label {
+        font-weight: 500;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.85); /* Light label text */
+      }
+
+      .search-box input,
+      .category-selection select,
+      .status-selection select {
+        padding: 10px 15px;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: white;
+        color: var(--text-dark);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .search-box input:focus,
+      .category-selection select:focus,
+      .status-selection select:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 4px rgba(93, 86, 197, 0.3);
+        outline: none;
+      }
+
+      /* --- INVENTORY TABLE --- */
+      .inventory-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+      }
+
+      .inventory-table {
+        width: 100%;
+        max-width: 1200px;
+        border-collapse: separate;
+        border-spacing: 0;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        overflow: hidden;
+      }
+
+      .table-caption {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 30px 0 15px 0;
+        padding: 10px 20px;
+        color: var(--text-dark);
+        caption-side: top;
+        text-align: left;
+        background: #ffffff; /* White background for caption */
+        border-radius: 8px 8px 0 0;
+      }
+
+      thead th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        text-align: left;
+        padding: 18px 20px;
+        border-bottom: 2px solid var(--secondary-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      tbody td {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-dark);
+        vertical-align: middle;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:hover {
+        background-color: #f0f2f4; /* More noticeable hover */
+        transform: scale(1.005);
+        transition: background-color 0.2s, transform 0.1s;
+      }
+
+      /* Align columns */
+      .right-align {
+        text-align: right;
+      }
+
+      .qty-col {
+        width: 100px;
+      }
+
+      .price-col {
+        width: 130px;
+      }
+
+      .price {
+        font-family: "Roboto Mono", monospace;
+        font-weight: 700;
+        color: var(--success-text); /* Stronger color for price */
+      }
+
+      /* --- STATUS BADGES (BOLDER COLORS) --- */
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px; /* Pill shape */
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        min-width: 110px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .status-in-stock {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+        border: 1px solid var(--success-text);
+      }
+
+      .status-low-stock {
+        background-color: var(--warning-bg);
+        color: var(--warning-text);
+        border: 1px solid var(--warning-text);
+      }
+
+      .status-out-of-stock {
+        background-color: var(--danger-bg);
+        color: var(--danger-text);
+        border: 1px solid var(--danger-text);
+      }
+
+      /* --- RESPONSIVE MOBILE STYLES (Max-Width: 768px) --- */
+      @media all and (max-width: 768px) {
+        .main-header {
+          padding: 20px;
+        }
+
+        .page-title {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+
+        .form-elements {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 15px;
+        }
+
+        .control-group label {
+          color: white; /* Keep labels white for better contrast on indigo */
+        }
+
+        /* Full mobile table override for cards */
+        .inventory-table {
+          box-shadow: none;
+          background-color: transparent;
+        }
+
+        .table-caption {
+          text-align: center;
+          padding: 0 10px;
+          margin-top: 15px;
+          background: transparent;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tbody {
+          display: block;
+        }
+
+        tr {
+          display: block;
+          margin-bottom: 15px;
+          padding: 15px;
+          border: 1px solid var(--border-light);
+          border-radius: 10px;
+          background-color: #ffffff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        tbody tr:hover {
+          background-color: #ffffff;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+          transform: none; /* Disable scale transform on mobile cards */
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          text-align: right;
+          padding: 10px 0;
+          border-bottom: 1px dotted var(--border-light);
+        }
+
+        td:last-child {
+          border-bottom: none;
+        }
+
+        td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: var(--text-medium);
+          text-align: left;
+          flex: 1;
+          padding-right: 15px;
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <h1 class="page-title">Product Inventory Dashboard</h1>
+      <form action="" class="filter-form">
+        <div class="form-elements">
+          <div class="search-box control-group">
+            <label for="search">Search: </label>
+            <input type="search" placeholder="Product name" id="search" />
+          </div>
+
+          <div class="category-selection control-group">
+            <label for="category-dropdown">Category: </label>
+            <select name="category-dropdown" id="category-dropdown">
+              <option value="">All</option>
+              <option value="electronics">Electronics</option>
+              <option value="home">Home</option>
+              <option value="office">Office</option>
+              <option value="furniture">Furniture</option>
+              <option value="clothing">Clothing</option>
+            </select>
+          </div>
+
+          <div class="status-selection control-group">
+            <label for="status-dropdown">Status: </label>
+            <select name="status-dropdown" id="status-dropdown">
+              <option value="">All</option>
+              <option value="in-stock">In Stock</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </header>
+
+    <section class="hero inventory-section">
+      <table class="inventory-table">
+        <caption class="table-caption">
+          Inventory - September
+        </caption>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th class="qty-col">Qty</th>
+            <th class="price-col">Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="SKU">12345</td>
+            <td data-label="Name"><a href="#">Smartphone</a></td>
+            <td data-label="Category">Electronics</td>
+            <td data-label="Qty" class="right-align">150</td>
+            <td data-label="Price" class="right-align price">$599.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-in-stock">In Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">23456</td>
+            <td data-label="Name"><a href="#">Laptop</a></td>
+            <td data-label="Category">Electronics</td>
+            <td data-label="Qty" class="right-align">50</td>
+            <td data-label="Price" class="right-align price">$999.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-out-of-stock">Out of Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">34567</td>
+            <td data-label="Name"><a href="#">Sofa</a></td>
+            <td data-label="Category">Furniture</td>
+            <td data-label="Qty" class="right-align">20</td>
+            <td data-label="Price" class="right-align price">$349.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-in-stock">In Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">45678</td>
+            <td data-label="Name"><a href="#">Jacket</a></td>
+            <td data-label="Category">Clothing</td>
+            <td data-label="Qty" class="right-align">120</td>
+            <td data-label="Price" class="right-align price">$79.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-in-stock">In Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">56789</td>
+            <td data-label="Name"><a href="#">Smartwatch</a></td>
+            <td data-label="Category">Electronics</td>
+            <td data-label="Qty" class="right-align">75</td>
+            <td data-label="Price" class="right-align price">$199.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-out-of-stock">Out of Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">67890</td>
+            <td data-label="Name"><a href="#">Dining Table</a></td>
+            <td data-label="Category">Furniture</td>
+            <td data-label="Qty" class="right-align">10</td>
+            <td data-label="Price" class="right-align price">$499.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-low-stock">Low Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">78901</td>
+            <td data-label="Name"><a href="#">T-shirt</a></td>
+            <td data-label="Category">Clothing</td>
+            <td data-label="Qty" class="right-align">200</td>
+            <td data-label="Price" class="right-align price">$19.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-in-stock">In Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">89012</td>
+            <td data-label="Name"><a href="#">Washing Machine</a></td>
+            <td data-label="Category">Electronics</td>
+            <td data-label="Qty" class="right-align">35</td>
+            <td data-label="Price" class="right-align price">$699.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-out-of-stock">Out of Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">90123</td>
+            <td data-label="Name"><a href="#">Bookshelf</a></td>
+            <td data-label="Category">Furniture</td>
+            <td data-label="Qty" class="right-align">45</td>
+            <td data-label="Price" class="right-align price">$149.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-in-stock">In Stock</span>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="SKU">11234</td>
+            <td data-label="Name"><a href="#">Sweater</a></td>
+            <td data-label="Category">Clothing</td>
+            <td data-label="Qty" class="right-align">85</td>
+            <td data-label="Price" class="right-align price">$39.99</td>
+            <td data-label="Status">
+              <span class="status-badge status-low-stock">Low Stock</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>
