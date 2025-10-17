@@ -1,5 +1,4 @@
 resource "aws_security_group" "ec2_sg" {
-    name = "Security Group for EC2 Instance"
     description = "Security Group or Firewall for the EC2 Instance"
 
     ingress {
