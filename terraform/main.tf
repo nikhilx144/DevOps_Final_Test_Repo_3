@@ -64,17 +64,16 @@ resource "aws_instance" "ec2_instance" {
     vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
     user_data = <<-EOT
-        #!/bin/bash
-        # Update all packages
-        sudo dnf update -y
-        # Install Docker
-        sudo dnf install -y docker || sudo amazon-linux-extras install docker -y
-        # Start the Docker service
-        sudo systemctl start docker
-        # Ensure Docker starts on boot
-        sudo systemctl enable docker
-        # Add the ec2-user to the docker group to run docker without sudo
-        sudo usermod -aG docker ec2-user
+              #!/bin/bash
+              # Update all packages
+              sudo dnf update -y
+              # Install Docker and the AWS CLI
+              sudo dnf install -y docker aws-cli
+              # Start and enable the Docker service
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              # Add the default user to the docker group
+              sudo usermod -a -G docker ec2-user
     EOT
 
     tags = {
