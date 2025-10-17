@@ -24,7 +24,7 @@ pipeline {
                 dir('terraform') {
                     withAWS(credentials: 'aws_credentials', region: AWS_REGION) {
                         // Initialize Terraform and apply the configuration
-                        sh 'terraform init -input=false'
+                        sh 'terraform init -input=false -reconfigure'
                         sh 'terraform apply -auto-approve'
                         // Get the public IP output from Terraform and save it as a variable
                         script {
