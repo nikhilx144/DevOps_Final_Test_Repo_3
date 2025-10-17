@@ -23,9 +23,8 @@ pipeline {
             steps {
                 dir('terraform') {
                     withAWS(credentials: 'aws_credentials', region: AWS_REGION) {
-                        // This line safely removes any old local state files.
-                        // The '-f' flag means "force," so it won't error if the files don't exist.
-                        sh 'rm -f .terraform.tfstate*'
+                        // This single command wipes all local Terraform caches and state files.
+                        sh 'rm -rf .terraform .terraform.lock.hcl terraform.tfstate*'
                         // Initialize Terraform and apply the configuration
                         sh 'terraform init -input=false -reconfigure'
                         sh 'terraform apply -auto-approve'
