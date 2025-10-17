@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        terrafrom "terraform-latest"
+        terraform "terraform-latest"
     }
 
     environment {
