@@ -49,6 +49,10 @@ pipeline {
                     # Clean up the installer files so the workspace is fresh for the next run
                     rm -rf aws awscliv2.zip
                 '''
+
+                // It forcefully removes all unused images and build caches.
+                sh 'docker system prune -a -f'
+
                 withAWS(credentials: 'aws_credentials', region: AWS_REGION) {
                     sh "docker build -t ${ECR_REPO_URI}:${BUILD_NUMBER} ."
                     sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI}"
