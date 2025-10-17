@@ -24,9 +24,10 @@ pipeline {
                 dir('terraform') {
                     withAWS(credentials: 'aws_credentials', region: AWS_REGION) {
                         // This single command wipes all local Terraform caches and state files.
-                        sh 'rm -rf .terraform .terraform.lock.hcl terraform.tfstate*'
+                        // sh 'rm -rf .terraform .terraform.lock.hcl terraform.tfstate*'
                         // Initialize Terraform and apply the configuration
-                        sh 'terraform init -input=false -reconfigure'
+                        // sh 'terraform init -input=false -reconfigure'
+                        sh 'terraform init'
                         sh 'terraform apply -auto-approve'
                         // Get the public IP output from Terraform and save it as a variable
                         script {
