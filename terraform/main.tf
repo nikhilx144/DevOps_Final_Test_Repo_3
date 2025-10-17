@@ -85,4 +85,5 @@ resource "aws_instance" "ec2_instance" {
 resource "aws_ecr_repository" "app_repo" {
   name = "devops_ci_cd_final_prac_3" # This must match the name in your Jenkinsfile
   image_tag_mutability = "MUTABLE"
+  force_delete = true
 }
